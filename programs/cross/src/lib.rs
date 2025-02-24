@@ -1,26 +1,27 @@
+
 mod errors;
 mod instructions;
 mod msg_codec;
 mod state;
 
+use msg_codec::{msg_type, src_eid};
+use crate::instructions::quote::Quote;
 use anchor_lang::prelude::*;
 use errors::*;
 use instructions::*;
-use msg_codec::*;
+// use msg_codec::*;
 use state::*;
-// use oapp::{
-//     endpoint::{MessagingFee, ID as ENDPOINT_ID, endpoint_cpi::LzAccount},
-//     LzComposeParams, LzReceiveParams,
-// };
+#[allow(unused_imports)]
 use oapp::{
     endpoint::{MessagingFee, ID as ENDPOINT_ID},
     endpoint_cpi::LzAccount,
-    LzComposeParams, LzReceiveParams,
+    /*ComposeParams,*/LzReceiveParams,
 };
 
 
+
 const LZ_RECEIVE_TYPES_SEED: &[u8] = b"LzReceiveTypes";
-const LZ_COMPOSE_TYPES_SEED: &[u8] = b"LzComposeTypes";
+// const LZ_COMPOSE_TYPES_SEED: &[u8] = b"LzComposeTypes";
 const COUNT_SEED: &[u8] = b"Count";
 const REMOTE_SEED: &[u8] = b"Remote";
 
@@ -40,11 +41,22 @@ pub mod lzreceiver {
         Quote::apply(&ctx, &params)
     }
 
-    /// Receives a LayerZero message and processes swap instructions.
+    // /// Receives a LayerZero message and processes swap instructions.
+    // pub fn lz_receive(mut ctx: Context<LzReceive>, params: LzReceiveParams) -> Result<()> {
+    //     LzReceive::apply(&mut ctx, &params)
+    // }
+    
     pub fn lz_receive(mut ctx: Context<LzReceive>, params: LzReceiveParams) -> Result<()> {
+        // let message = params.payload.as_slice();
+        let message = params.message.as_slice();
+        let message_type = msg_type(message);
+        let source_eid = src_eid(message);
+    
+        msg!("Received message type: {}", message_type);
+        msg!("Source EID: {}", source_eid);
+    
         LzReceive::apply(&mut ctx, &params)
     }
-
     /// Returns the required accounts for the `LzReceive` instruction.
     pub fn lz_receive_types(
         ctx: Context<LzReceiveTypes>,

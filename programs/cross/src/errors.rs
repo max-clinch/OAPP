@@ -31,4 +31,13 @@ pub enum CounterError {
 
     #[msg("Unknown error occurred.")]
     UnknownError,
+
+    #[msg("Failed to clear the message in LayerZero.")]
+    ClearFailed, 
+
+    #[msg("Failed to send composed message.")]
+    SendComposeFailed, 
+
+    #[msg("Unauthorized recipient.")]  // ✅ Add this error
+    UnauthorizedRecipient,
 }
